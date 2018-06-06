@@ -112,7 +112,7 @@ def EncodeTrainExamples(sample):
     return input_tensor,target_tensor
 
 
-def train(encoder, w2i, iter = 5000, learning_rate = 0.01):
+def train(encoder, iter = 5000, learning_rate = 0.01):
     encode_hidden = encoder.initHidden()
     vector_optimizer = optim.SGD(vector.parameters(), lr=learning_rate)
     criterion = nn.NLLLoss()
@@ -130,3 +130,15 @@ def train(encoder, w2i, iter = 5000, learning_rate = 0.01):
 
         loss.backward()
         vector_optimizer.step()
+
+def randomEvaluate(encoder):
+    encoder_hidden = encoder.initHidden()
+    sample = random.choice(art_ques_ans)
+    input_tensor, target_tensor = EncodeTrainExamples(sample)
+    input_length = input_tensor.size(0)
+    for ei in range(input_length):
+        output, encoder_hidden = vector(input_tensor[ei],encoder_hidden)
+    value,index = torch.topk(output,1)
+    print(i2w[index.item()])
+
+        
