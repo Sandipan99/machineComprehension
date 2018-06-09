@@ -78,7 +78,7 @@ art_ques_ans, w2i, i2w = build_vocabulary("cnn/questions/training")
 
 class Encoder(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
-        super(EncoderRNN, self).__init__()
+        super(Encoder, self).__init__()
         self.hidden_size = hidden_size
         self.embedding = nn.Embedding(input_size, hidden_size)
         self.gru = nn.GRU(hidden_size, hidden_size)
@@ -106,15 +106,15 @@ def ObtainArticleQuestionTensor(article, question):
     return torch.tensor(t_v, dtype=torch.long).view(-1, 1)
 
 def EncodeTrainExamples(sample):
-    ans = w2i(sample[2])
-    target_tensor = torch.LongTensor([pair[1]])
+    ans = w2i[sample[2]]
+    target_tensor = torch.LongTensor([ans])
     input_tensor = ObtainArticleQuestionTensor(sample[0],sample[1])
     return input_tensor,target_tensor
 
 
 def train(encoder, iter = 5000, learning_rate = 0.01):
-    encode_hidden = encoder.initHidden()
-    vector_optimizer = optim.SGD(vector.parameters(), lr=learning_rate)
+    encoder_hidden = encoder.initHidden()
+    encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     criterion = nn.NLLLoss()
 
     for i in range(iter):
@@ -122,14 +122,15 @@ def train(encoder, iter = 5000, learning_rate = 0.01):
         input_tensor, target_tensor = EncodeTrainExamples(sample)
         input_length = input_tensor.size(0)
         for ei in range(input_length):
-            output, encoder_hidden = vector(input_tensor[ei],encoder_hidden)
+            output, encoder_hidden = encoder(input_tensor[ei],encoder_hidden)
 
         loss = criterion(output, target_tensor)
 
-        vector_optimizer.zero_grad()
+        print('loss:',loss)
+        encoder_optimizer.zero_grad()
 
-        loss.backward()
-        vector_optimizer.step()
+        loss.backward(retain_graph=True)
+        encoder_optimizer.step()
 
 def randomEvaluate(encoder):
     encoder_hidden = encoder.initHidden()
