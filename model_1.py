@@ -18,6 +18,7 @@ def map_original(article,entity_map):
     return article
 
 def tokenise(line):
+    translator = str.maketrans('', '', string.punctuation)
     line = line.translate(translator)
     temp = line.strip().split(' ')
     temp = [a for a in temp if a!='']
@@ -37,7 +38,6 @@ def build_vocabulary(dir): # create a word2index and index2word maps for documen
     w_c = 0
     w2i = {}
     i2w = {}
-    translator = str.maketrans('', '', string.punctuation)
     for r,d,f in os.walk(dir):
         print (r)
         for file in f:
@@ -141,4 +141,8 @@ def randomEvaluate(encoder):
     value,index = torch.topk(output,1)
     print(i2w[index.item()])
 
-        
+hidden_size = 50
+input_size = len(w2i)
+output_size = len(w2i)
+encoder = Encoder(input_size, hidden_size, output_size)
+train(encoder)
