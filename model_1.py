@@ -113,11 +113,11 @@ def EncodeTrainExamples(sample):
 
 
 def train(encoder, iter = 5000, learning_rate = 0.01):
-    encoder_hidden = encoder.initHidden()
     encoder_optimizer = optim.SGD(encoder.parameters(), lr=learning_rate)
     criterion = nn.NLLLoss()
 
     for i in range(iter):
+        encoder_hidden = encoder.initHidden()
         sample = random.choice(art_ques_ans)
         input_tensor, target_tensor = EncodeTrainExamples(sample)
         input_length = input_tensor.size(0)
