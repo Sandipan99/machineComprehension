@@ -132,6 +132,7 @@ def train(encoder, iter = 5000, learning_rate = 0.01):
         loss.backward(retain_graph=True)
         encoder_optimizer.step()
 
+
 def randomEvaluate(encoder):
     encoder_hidden = encoder.initHidden()
     sample = random.choice(art_ques_ans)

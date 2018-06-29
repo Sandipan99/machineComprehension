@@ -16,7 +16,7 @@ art_ques_ans, w2i, i2w = build_vocabulary("cnn/questions/training")
 
 class Encoder_attention(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
-        super(Encoder, self).__init__()
+        super(Encoder_attention, self).__init__()
         self.hidden_size = hidden_size
         self.input_size = input_size
         self.output_size = output_size
@@ -33,8 +33,8 @@ class Encoder_attention(nn.Module):
             output = embedded
             output, hidden = self.gru(output, hidden)
 
-        output = torch.cat((output[0],hidden),1)
-        output = self.out(output)
+        output = torch.cat((output[0],hidden[0]),1)
+        output = self.out(output[0]).view(1,-1)
         output = self.softmax(output)
         return output
 
@@ -58,3 +58,10 @@ def train(encoder, iter = 5000, learning_rate = 0.01):
 
         loss.backward(retain_graph=True)
         encoder_optimizer.step()
+
+if __name__=="__main__":
+    hidden_size = 50
+    input_size = len(w2i)
+    output_size = len(w2i)
+    encoder = Encoder_attention(input_size, hidden_size, output_size)
+    train(encoder)
