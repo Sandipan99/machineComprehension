@@ -142,8 +142,9 @@ def randomEvaluate(encoder):
     value,index = torch.topk(output,1)
     print(i2w[index.item()])
 
-hidden_size = 50
-input_size = len(w2i)
-output_size = len(w2i)
-encoder = Encoder(input_size, hidden_size, output_size)
-train(encoder)
+if __name__=="__main__":
+    hidden_size = 50
+    input_size = len(w2i)
+    output_size = len(w2i)
+    encoder = Encoder(input_size, hidden_size, output_size)
+    train(encoder)
